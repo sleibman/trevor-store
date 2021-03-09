@@ -18,6 +18,14 @@ class Inventory extends React.Component {
 
   state = { uid: null, owner: null };
 
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.authHandler({ user });
+      }
+    });
+  }
+
   authHandler = async (authData) => {
     // 1. look up the current store in firebase
     const store = await base.fetch(this.props.storeId, { context: this });
@@ -43,7 +51,15 @@ class Inventory extends React.Component {
     firebaseApp.auth().signInWithPopup(authProvider).then(this.authHandler);
   };
 
+  logout = async () => {
+    console.log("Logging out!");
+    await firebase.auth().signOut();
+    this.setState({ uid: null });
+  };
+
   render() {
+    const logout = <button onClick={this.logout}>Log out!</button>;
+
     // 1. check if logged in
     if (!this.state.uid) {
       return <Login authenticate={this.authenticate} />;
@@ -53,7 +69,8 @@ class Inventory extends React.Component {
     if (this.state.uid !== this.state.owner) {
       return (
         <div>
-          <p>Sorry, you are not the owner.</p>
+          <p>Sorry, you are not the owner of this store!</p>
+          {logout}
         </div>
       );
     }
@@ -62,6 +79,7 @@ class Inventory extends React.Component {
     return (
       <div className="inventory">
         <h2>Inventory!!!</h2>
+        {logout}
         {Object.keys(this.props.fishes).map((key) => (
           <EditFishForm
             fish={this.props.fishes[key]}

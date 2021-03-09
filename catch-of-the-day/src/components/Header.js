@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const Header = (props) => (
   <header className="top">
-    <img src="../images/teddy_bear.jpg" height="80"></img>
+    <img src="../images/cowboy_hat.jpg" height="120"></img>
     <h1>Costumes</h1>
     <h3 className="tagline">
       <span>{props.tagline}</span>
